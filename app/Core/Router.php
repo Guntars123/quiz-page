@@ -2,14 +2,36 @@
 
 namespace App\Core;
 
+use App\Database\DatabaseConnection;
+use App\Repositories\UserTestRepository;
+use DI\ContainerBuilder;
+use Doctrine\DBAL\Connection;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Psr\Container\ContainerInterface;
 use function FastRoute\simpleDispatcher;
 
 class Router
 {
     public static function response(array $routes): ?View
     {
+        $builder = new ContainerBuilder();
+
+        $builder->addDefinitions([
+            // Database connection
+            Connection::class => function () {
+                return DatabaseConnection::getConnection();
+            },
+
+            // Repositories
+            UserTestRepository::class => function (ContainerInterface $container) {
+                return new UserTestRepository($container->get(Connection::class));
+            }
+        ]);
+
+        $container = $builder->build();
+
+
         $dispatcher = simpleDispatcher(function (RouteCollector $router) use ($routes) {
             foreach ($routes as $route) {
                 [$method, $path, $handler] = $route;
@@ -37,11 +59,10 @@ class Router
             case Dispatcher::FOUND:
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
+                [$controllerName, $methodName] = $handler;
+                $controller = $container->get($controllerName);
 
-                [$className, $methodName] = $handler;
-                $controller = new $className();
-
-                return $controller->{$methodName}();
+                return $controller->{$methodName}($vars);
         }
         return null;
     }
