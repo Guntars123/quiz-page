@@ -1,9 +1,28 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-    <h1>Index page</h1>
-    {% for tes in test  %}
-        <p>{{ tes }}</p>
-    {% endfor %}
+    <h1>Welcome to the Test System</h1>
 
+    <form action="/" method="post">
+        <div>
+            <label for="username">Enter your name:</label>
+            <input type="text" id="username" name="username">
+            {% if session.errors.username %}
+                <p>{{ session.errors.username[0] }}</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <label for="testSelection">Choose a test:</label>
+            <select id="testSelection" name="testId">
+                {% for test in tests %}
+                    <option value="{{ test.getId() }}">{{ test.getName() }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <input type="submit" value="Start Test">
+        </div>
+    </form>
 {% endblock %}

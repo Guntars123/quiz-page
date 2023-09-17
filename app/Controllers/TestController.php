@@ -2,24 +2,29 @@
 
 namespace App\Controllers;
 
+use App\Repositories\QuestionRepository;
 use App\Core\View;
-use App\Repositories\UserTestRepository;
 
 class TestController
 {
-    private UserTestRepository $userTestRepository;
+    private QuestionRepository $questionRepository;
 
-    public function __construct(UserTestRepository $userTestRepository)
+    public function __construct(QuestionRepository $questionRepository)
     {
-        $this->userTestRepository = $userTestRepository;
+        $this->questionRepository = $questionRepository;
     }
 
-    public function index(): View
+    public function showTest(array $vars): View
     {
-        $test = $this->userTestRepository->findByUsername('AA');
+        $testId = (int)$vars['id'];
 
-        return new View("index", ['test' => $test]);
+        $questions = $this->questionRepository->getQuestionsByTestId($testId);
+        $questionCount = $this->questionRepository->getQuestionCountByTestId($testId);
+
+        return new View('showTest', [
+            'questions' => $questions,
+            'questionCount' => $questionCount,
+            'testId' => $testId,
+        ]);
     }
 }
-
-

@@ -7,12 +7,14 @@ class Question
     private int $id;
     private string $text;
     private int $test_id;
+    private array $options;
 
-    public function __construct($id, $text, $test_id)
+    public function __construct($id, $text, $test_id, $options)
     {
         $this->id = $id;
         $this->text = $text;
         $this->test_id = $test_id;
+        $this->options = $options;
     }
 
     public function getId(): int
@@ -28,5 +30,10 @@ class Question
     public function getTestId(): int
     {
         return $this->test_id;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 }

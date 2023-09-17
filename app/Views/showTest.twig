@@ -1,0 +1,22 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1>{{ test.getName() }}</h1>
+
+    <form action="/submitAnswers" method="post">
+        {% for question in questions %}
+            <div>
+                <h3>{{ question.getText() }}</h3>
+
+                {% for option in question.getOptions() %}
+                    <div>
+                        <input type="radio" name="answers[{{ question.getId() }}]" value="{{ option.getId() }}" required>
+                        <label>{{ option.getText() }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <input type="hidden" name="testId" value="{{ test.getId() }}">
+        <button type="submit">Submit Test</button>
+    </form>
+{% endblock %}
