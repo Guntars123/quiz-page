@@ -25,17 +25,17 @@ class Validator
         }
     }
 
-    private function validateRequired(): void
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    private function validateUsername(): void
     {
         $userName = $this->fields['username'];
 
         if (empty($userName)) {
             $this->errors['username'][] = 'Username are required.';
         }
-    }
-
-    private function getErrors(): array
-    {
-        return $this->errors;
     }
 }

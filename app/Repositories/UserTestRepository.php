@@ -25,7 +25,7 @@ class UserTestRepository
         return $queryBuilder->executeQuery()->fetchAssociative();
     }
 
-    public function save($username, $testId):void
+    public function saveUserTest($username, $testId, $correctAnswers): int
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 
@@ -40,8 +40,32 @@ class UserTestRepository
             )
             ->setParameter('username', $username)
             ->setParameter('test_id', $testId)
-            ->setParameter('score', 0)
+            ->setParameter('score', $correctAnswers)
             ->setParameter('created_at', date('Y-m-d H:i:s'));
+
+        $queryBuilder->executeQuery();
+
+        $userTestId = $this->connection->lastInsertId();
+
+        return (int)$userTestId;
+    }
+
+
+    public function saveUserAnswers($userTestId, $questionId, $optionId): void
+    {
+        $queryBuilder = $this->connection->createQueryBuilder();
+
+        $queryBuilder->insert('user_answers')
+            ->values(
+                [
+                    'user_test_id' => ':user_test_id',
+                    'question_id' => ':question_id',
+                    'option_id' => ':option_id',
+                ]
+            )
+            ->setParameter('user_test_id', $userTestId)
+            ->setParameter('question_id', $questionId)
+            ->setParameter('option_id', $optionId);
 
         $queryBuilder->executeQuery();
     }

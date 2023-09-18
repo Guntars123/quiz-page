@@ -33,15 +33,20 @@ class HomeController
         return new View('index', ['tests' => $tests]);
     }
 
-    public function startTest(): void
+    public function testSelection(): void
     {
         $this->validator->validateStartTestForm($_POST);
+
+        if (count($this->validator->getErrors()) > 0) {
+            header("Location: /");
+            exit();
+        }
 
         $username = $_POST['username'];
 
         $testId = (int)$_POST['testId'];
 
-        $this->userTestRepository->save($username, $testId);
+        $_SESSION['username'] = $username;
 
         header("Location: /test/$testId");
         exit();

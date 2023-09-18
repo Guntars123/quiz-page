@@ -3,20 +3,74 @@
 {% block content %}
     <h1>{{ test.getName() }}</h1>
 
-    <form action="/submitAnswers" method="post">
+    <!-- Progress Bar Structure -->
+    <div class="progress-bar">
+        <div class="progress-filled"></div>
+    </div>
+
+    <form action="/test/{{ testId}}/submit" method="post" id="testForm">
         {% for question in questions %}
-            <div>
+            <div class="question" style="display: none;"> <!-- Add class and hide -->
                 <h3>{{ question.getText() }}</h3>
 
                 {% for option in question.getOptions() %}
                     <div>
-                        <input type="radio" name="answers[{{ question.getId() }}]" value="{{ option.getId() }}" required>
+                        <input type="radio" name="answers[{{ question.getId() }}]" value="{{ option.getId() }}"
+                               required>
                         <label>{{ option.getText() }}</label>
                     </div>
                 {% endfor %}
             </div>
         {% endfor %}
         <input type="hidden" name="testId" value="{{ test.getId() }}">
-        <button type="submit">Submit Test</button>
+        <button type="submit" style="display: none;">Submit Test</button>
     </form>
+
+    <style>
+        /* Progress bar styles */
+        .progress-bar {
+            background: #e0e0e0;
+            height: 20px;
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .progress-filled {
+            background: #4CAF50; /* Color of the filled portion */
+            height: 100%;
+            width: 0;
+            border-radius: 10px;
+        }
+    </style>
+
+    <script>
+        const questions = document.querySelectorAll('.question');
+        const submitButton = document.querySelector('button[type="submit"]');
+
+        // Show the first question
+        questions[0].style.display = 'block';
+
+        // Get progress bar filled div
+        const progressBar = document.querySelector('.progress-filled');
+
+        questions.forEach((question, index) => {
+            const options = question.querySelectorAll('input[type="radio"]');
+            options.forEach(option => {
+                option.addEventListener('change', () => {
+                    question.style.display = 'none'; // hide current question
+
+                    if (index === questions.length - 1) { // if it's the last question
+                        submitButton.style.display = 'block'; // show the submit button
+                    } else {
+                        questions[index + 1].style.display = 'block'; // show next question
+                    }
+
+                    // Update progress bar
+                    let progressPercent = ((index + 1) / questions.length) * 100;
+                    progressBar.style.width = `${progressPercent}%`;
+                });
+            });
+        });
+    </script>
 {% endblock %}

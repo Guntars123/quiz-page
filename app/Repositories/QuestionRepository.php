@@ -46,6 +46,19 @@ class QuestionRepository
         return $queryBuilder->executeQuery()->fetchOne();
     }
 
+    public function getCorrectOptionIdByQuestionId(int $questionId): string
+    {
+        $queryBuilder = $this->connection->createQueryBuilder();
+
+        $queryBuilder->select('id')
+            ->from('options')
+            ->where('question_id = :question_id')
+            ->andWhere('is_correct = 1')
+            ->setParameter('question_id', $questionId);
+
+        return $queryBuilder->executeQuery()->fetchOne();
+    }
+
     private function buildModel(array $questions): Question
     {
         return new Question(
