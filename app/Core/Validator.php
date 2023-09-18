@@ -35,7 +35,16 @@ class Validator
         $userName = $this->fields['username'];
 
         if (empty($userName)) {
-            $this->errors['username'][] = 'Username are required.';
+            $this->errors['username'][] = 'Username are required';
+        }
+    }
+
+    private function validateTestid(): void
+    {
+        $testId = $this->fields['testId'];
+
+        if (empty($testId)) {
+            $this->errors['testId'][] = 'You have to select test';
         }
     }
 }

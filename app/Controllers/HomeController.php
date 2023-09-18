@@ -2,27 +2,22 @@
 
 namespace App\Controllers;
 
-use App\Core\Validator;
 use App\Repositories\TestRepository;
+use App\Core\Validator;
 use App\Core\View;
-use App\Repositories\UserTestRepository;
 
 class HomeController
 {
     private TestRepository $testRepository;
-    private UserTestRepository $userTestRepository;
     private Validator $validator;
-
 
     public function __construct
     (
-        TestRepository     $testRepository,
-        UserTestRepository $userTestRepository,
-        Validator          $validator
+        TestRepository $testRepository,
+        Validator      $validator
     )
     {
         $this->testRepository = $testRepository;
-        $this->userTestRepository = $userTestRepository;
         $this->validator = $validator;
     }
 

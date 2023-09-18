@@ -31,6 +31,20 @@ class TestRepository
         return $testsCollection;
     }
 
+    public function getTestById(int $id): Test
+    {
+        $queryBuilder = $this->connection->createQueryBuilder();
+
+        $queryBuilder->select('*')
+            ->from('tests')
+            ->where('id = :id')
+            ->setParameter('id', $id);
+
+        $test = $queryBuilder->executeQuery()->fetchAssociative();
+
+        return $this->buildModel($test);
+    }
+
     private function buildModel(array $data): Test
     {
         return new Test(

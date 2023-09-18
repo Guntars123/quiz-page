@@ -1,28 +1,29 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-    <h1>Welcome to the Test System</h1>
-
-    <form action="/" method="post">
-        <div>
-            <label for="username">Enter your name:</label>
-            <input type="text" id="username" name="username">
-            {% if session.errors.username %}
-                <p>{{ session.errors.username[0] }}</p>
-            {% endif %}
+    <h1 class="page-title">Testa uzdevums</h1>
+    <form action="/" method="post" class="test-select-form">
+        <div class="input-group">
+            <div>
+                <input type="text" id="username" name="username" placeholder="Ievadi savu vārdu" class="styled-input">
+                {% if session.errors.username %}
+                    <p class="error">{{ session.errors.username[0] }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <select id="testSelection" name="testId" class="styled-input styled-select">
+                    <option value="">Izvēlies testu</option>
+                    {% for test in tests %}
+                        <option value="{{ test.getId() }}">{{ test.getName() }}</option>
+                    {% endfor %}
+                </select>
+                {% if session.errors.testId %}
+                    <p class="error">{{ session.errors.testId[0] }}</p>
+                {% endif %}
+            </div>
         </div>
-
         <div>
-            <label for="testSelection">Choose a test:</label>
-            <select id="testSelection" name="testId">
-                {% for test in tests %}
-                    <option value="{{ test.getId() }}">{{ test.getName() }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div>
-            <input type="submit" value="Start Test">
+            <input type="submit" value="Sākt" class="styled-button">
         </div>
     </form>
 {% endblock %}

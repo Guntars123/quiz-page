@@ -3,12 +3,10 @@
 namespace App\Core;
 
 use App\Database\DatabaseConnection;
-use App\Repositories\UserTestRepository;
 use DI\ContainerBuilder;
 use Doctrine\DBAL\Connection;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Psr\Container\ContainerInterface;
 use function FastRoute\simpleDispatcher;
 
 class Router
@@ -22,15 +20,9 @@ class Router
             Connection::class => function () {
                 return DatabaseConnection::getConnection();
             },
-
-            // Repositories
-            UserTestRepository::class => function (ContainerInterface $container) {
-                return new UserTestRepository($container->get(Connection::class));
-            }
         ]);
 
         $container = $builder->build();
-
 
         $dispatcher = simpleDispatcher(function (RouteCollector $router) use ($routes) {
             foreach ($routes as $route) {

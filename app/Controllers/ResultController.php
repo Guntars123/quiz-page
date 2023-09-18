@@ -3,31 +3,31 @@
 namespace App\Controllers;
 
 use App\Core\View;
-use App\Repositories\QuestionRepository;
-use App\Repositories\UserTestRepository;
+use App\Repositories\TestRepository;
 
 class ResultController
 {
-    private UserTestRepository $userTestRepository;
-    private QuestionRepository $questionRepository;
+    private TestRepository $testRepository;
 
-    public function __construct(UserTestRepository $userTestRepository, QuestionRepository $questionRepository)
+    public function __construct(TestRepository $testRepository)
     {
-        $this->userTestRepository = $userTestRepository;
-        $this->questionRepository = $questionRepository;
+        $this->testRepository = $testRepository;
     }
 
     public function showResults(array $vars): View
     {
         $testId = (int)$vars['id'];
 
-        // Assuming you save the result data in session (or any other method you prefer)
+        $test = $this->testRepository->getTestById($testId);
+
+
         $username = $_SESSION['username'];
         $correctAnswersCount = $_SESSION['correctAnswersCount'];
         $totalQuestionsCount = $_SESSION['totalQuestionsCount'];
 
 
         return new View('showResults', [
+            'test' => $test,
             'username' => $username,
             'correctAnswersCount' => $correctAnswersCount,
             'totalQuestionsCount' => $totalQuestionsCount,

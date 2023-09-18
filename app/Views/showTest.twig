@@ -1,74 +1,66 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-    <h1>{{ test.getName() }}</h1>
-
-    <!-- Progress Bar Structure -->
-    <div class="progress-bar">
-        <div class="progress-filled"></div>
-    </div>
-
-    <form action="/test/{{ testId}}/submit" method="post" id="testForm">
+    <h1 class="page-title">{{ test.getName() }}</h1>
+    <form action="/test/{{ testId }}/submit" method="post" id="testForm">
         {% for question in questions %}
-            <div class="question" style="display: none;"> <!-- Add class and hide -->
+            <div class="question" style="display: none;">
                 <h3>{{ question.getText() }}</h3>
-
-                {% for option in question.getOptions() %}
-                    <div>
-                        <input type="radio" name="answers[{{ question.getId() }}]" value="{{ option.getId() }}"
-                               required>
-                        <label>{{ option.getText() }}</label>
-                    </div>
-                {% endfor %}
+                <div class="options-group">
+                    {% for option in question.getOptions() %}
+                        <button type="button" class="option-button" data-value="{{ option.getId() }}">
+                            {{ option.getText() }}
+                        </button>
+                    {% endfor %}
+                    <input type="hidden" name="answers[{{ question.getId() }}]" value="">
+                </div>
             </div>
         {% endfor %}
-        <input type="hidden" name="testId" value="{{ test.getId() }}">
-        <button type="submit" style="display: none;">Submit Test</button>
+        <div class="progress-wrapper">
+            <div class="progress-bar">
+                <div class="progress-filled"></div>
+            </div>
+            <div class="progress-text">1/{{ questions|length }}</div>
+        </div>
     </form>
-
-    <style>
-        /* Progress bar styles */
-        .progress-bar {
-            background: #e0e0e0;
-            height: 20px;
-            width: 100%;
-            margin: 20px 0;
-            border-radius: 10px;
-        }
-
-        .progress-filled {
-            background: #4CAF50; /* Color of the filled portion */
-            height: 100%;
-            width: 0;
-            border-radius: 10px;
-        }
-    </style>
 
     <script>
         const questions = document.querySelectorAll('.question');
-        const submitButton = document.querySelector('button[type="submit"]');
+        const testForm = document.getElementById('testForm'); // Reference to the form
 
         // Show the first question
         questions[0].style.display = 'block';
 
         // Get progress bar filled div
         const progressBar = document.querySelector('.progress-filled');
+        const progressText = document.querySelector('.progress-text');
 
         questions.forEach((question, index) => {
-            const options = question.querySelectorAll('input[type="radio"]');
+            const options = question.querySelectorAll('.option-button');
+            const hiddenInput = question.querySelector('input[type="hidden"]');
             options.forEach(option => {
-                option.addEventListener('change', () => {
-                    question.style.display = 'none'; // hide current question
+                option.addEventListener('click', () => {
+                    hiddenInput.value = option.getAttribute('data-value');
+                    question.style.display = 'none';
 
-                    if (index === questions.length - 1) { // if it's the last question
-                        submitButton.style.display = 'block'; // show the submit button
+                    // If it's the last question, submit the form
+                    if (index === questions.length - 1) {
+                        testForm.submit();
                     } else {
-                        questions[index + 1].style.display = 'block'; // show next question
+                        questions[index + 1].style.display = 'block';
                     }
 
                     // Update progress bar
                     let progressPercent = ((index + 1) / questions.length) * 100;
                     progressBar.style.width = `${progressPercent}%`;
+
+                    // Update progress bar text
+                    progressText.textContent = `${index + 2}/${questions.length}`; // +2 because index starts from 0 and we've already displayed the first question.
+
+                    // If it's the last question, we need to adjust the progress text back by one
+                    if (index === questions.length - 1) {
+                        progressText.textContent = `${index + 1}/${questions.length}`;
+                    }
                 });
             });
         });

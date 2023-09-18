@@ -1,7 +1,20 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-    <h1>Test Results</h1>
-    <p>Thanks, {{ username }}!</p>
-    <p>You were right on {{ correctAnswersCount }} out of {{ totalQuestionsCount }} questions.</p>
+    <h1 class="page-title">Testa "{{ test.getName() }}" rezultāti:</h1>
+    <p class="thanks-feedback">Paldies, {{ username }}!</p>
+
+    <div class="test-results">
+        {% if (correctAnswersCount / totalQuestionsCount) > 0.7 %}
+            <p class="success-feedback">Tu pareizi atbildēji uz {{ correctAnswersCount }} no {{ totalQuestionsCount }}
+                jautājumiem. Malacis!</p>
+        {% elseif (correctAnswersCount / totalQuestionsCount) > 0.4 %}
+            <p class="neutral-feedback">Tu pareizi atbildēji uz {{ correctAnswersCount }} no {{ totalQuestionsCount }}
+                jautājumiem. Nav slikti, turpini censties!</p>
+        {% else %}
+            <p class="failure-feedback">Tu pareizi atbildēji uz {{ correctAnswersCount }} no {{ totalQuestionsCount }}
+                jautājumiem. Nekas, nakošreiz veiksies labāk!</p>
+        {% endif %}
+    </div>
+    <a href="/" class="home-button">Uz sākumlapu</a>
 {% endblock %}
